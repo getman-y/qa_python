@@ -37,29 +37,33 @@ class TestBooksCollector:
         assert collector.get_book_genre(book) is None
 
     @pytest.mark.parametrize('genre', ['Скандинуар', 'Документальное кино', 'Артхаус'])
-    def test_get_books_with_specific_genre_get_books_with_non_existent_genre(self, genre):
+    def test_get_books_with_specific_genre_return_one_book_in_list(self, genre):
         collector = BooksCollector()
-        assert collector.get_books_with_specific_genre(collector.get_books_with_specific_genre(genre)) == []
+        name = 'Настенька'
+        genre = 'Комедии'
+        collector.add_new_book(name)
+        collector.set_book_genre(name, genre)
+        assert collector.get_books_with_specific_genre(genre) == [name]
 
     def test_get_books_genre_get_empty_dictionary(self):
         collector = BooksCollector()
         assert collector.get_books_genre() == {}
 
-    def test_get_books_for_children_check_banned_genre_are_not_on_the_list(self):
+    def test_get_books_for_children_return_one_book_in_list(self):
         collector = BooksCollector()
-        genre = "Артхаус"
-        collector.genre_age_rating.append(genre)
+        name = 'Настенька'
+        collector.add_new_book(name)
+        collector.set_book_genre(name, 'Комедии')
 
-        assert genre not in collector.get_books_for_children()
+        assert collector.get_books_for_children() == [name]
 
     @pytest.mark.parametrize('name', ['Котлован', 'Сало', 'Левиафан'])
-    def test_add_book_in_favorites_add_already_favorite_book(self, name):
+    def test_add_book_in_favorites_add_one_book(self, name):
         collector = BooksCollector()
         collector.add_new_book(name)
-        collector.favorites.append(name)
         collector.add_book_in_favorites(name)
 
-        assert len(collector.favorites) == len(set(collector.favorites))
+        assert collector.get_list_of_favorites_books() == [name]
 
     def test_delete_book_from_favorites_delete_one_book(self):
         collector = BooksCollector()
@@ -69,6 +73,10 @@ class TestBooksCollector:
         collector.delete_book_from_favorites(name)
         assert name not in collector.favorites
 
-    def test_get_list_of_favorites_books_get_not_empty_list(self):
+    def test_get_list_of_favorites_books_get_one_book(self):
         collector = BooksCollector()
-        assert collector.get_list_of_favorites_books() == []
+        name = 'Настенька'
+        collector.add_new_book(name)
+        collector.add_book_in_favorites(name)
+
+        assert collector.get_list_of_favorites_books() == [name]
